@@ -1,0 +1,239 @@
+/* ============================================================
+   AXIONFORGE  ·  Design Tokens  ·  "OS · LIGHT" THEME
+   "Not Just Learning. Building."
+   ------------------------------------------------------------
+   A bright, futuristic operating-system aesthetic: airy white &
+   cool-blue surfaces, sky-blue primary accent, soft iridescent
+   gradients, frosted-glass panels, gentle glow, and animated 3D.
+   Inspired by spatial-computing / Smart City OS R&D concepts —
+   the LIGHT variant.
+
+   TOKEN NAMES are kept stable (historic --af-spark / forge names)
+   so components re-theme automatically, but VALUES are now the
+   light sky-blue palette. --af-spark is SKY BLUE.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@600;700;800;900&display=swap');
+
+/* Azonix — the brand wordmark face (wide, all-caps, futuristic).
+   Self-hosted from the uploaded file. Orbitron remains the metric fallback. */
+@font-face {
+  font-family: 'Azonix';
+  src: url('/fonts/Azonix.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- COLORS ---------- */
+
+  /* Slate/ink neutral scale — dark → light. Used mostly for TEXT now. */
+  --af-ink:           #0A1A33;   /* darkest — primary text */
+  --af-obsidian:      #0F2444;
+  --af-carbon:        #16305A;
+  --af-iron:          #234072;
+  --af-steel:         #36548C;
+  --af-graphite:      #5B76A8;   /* muted icon / strong caption */
+  --af-smoke:         #8499BE;   /* disabled / placeholder */
+  --af-mist:          #A9B8D4;
+  --af-ash:           #CBD6E8;   /* hairlines on light */
+  --af-pearl:         #E4ECF7;   /* light divider */
+  --af-paper:         #F2F7FF;   /* light surface */
+  --af-bone:          #F8FBFF;   /* near-white */
+  --af-cloud:         #FFFFFF;
+
+  /* SKY BLUE — the primary accent (historic name: spark). */
+  --af-spark:         #0EA5E9;   /* sky blue 500 — buttons, focus, links */
+  --af-spark-bright:  #38BDF8;   /* hover / brighter */
+  --af-ember:         #7DD3FC;   /* soft tint */
+  --af-ignite:        #0284C7;   /* pressed / dark variant */
+  --af-flare:         rgba(14, 165, 233, 0.14);
+  --af-flare-strong:  rgba(14, 165, 233, 0.30);
+
+  /* Supporting spectrum — used lightly for accents & gradients. */
+  --af-azure:         #38BDF8;
+  --af-sky:           #0EA5E9;
+  --af-indigo:        #6366F1;
+  --af-violet:        #818CF8;
+  --af-violet-bright: #A5B4FC;
+  --af-teal:          #2DD4BF;
+  --af-cyan:          #22D3EE;
+
+  /* Semantic */
+  --af-success:       #10B981;
+  --af-warning:       #F59E0B;
+  --af-danger:        #EF4444;
+  --af-info:          #0EA5E9;
+
+  /* ----- Surface roles (LIGHT) ----- */
+  --af-bg:            #EAF2FE;   /* page base — cool blue-white */
+  --af-surface:       #FFFFFF;   /* cards */
+  --af-surface-2:     #F2F7FF;   /* raised / hover */
+  --af-surface-3:     #E4ECF7;   /* chips / dividers fill */
+  --af-glass:         rgba(255, 255, 255, 0.66);
+  --af-glass-2:       rgba(255, 255, 255, 0.88);
+  --af-border:        rgba(20, 48, 90, 0.12);
+  --af-border-strong: rgba(20, 48, 90, 0.22);
+  --af-border-spark:  rgba(14, 165, 233, 0.55);
+
+  --af-fg:            var(--af-ink);      /* primary text — near-dark navy */
+  --af-fg-2:          var(--af-carbon);   /* body */
+  --af-fg-3:          var(--af-steel);    /* secondary */
+  --af-fg-4:          var(--af-graphite); /* tertiary / captions */
+  --af-fg-5:          var(--af-smoke);    /* disabled / placeholder */
+
+  --af-accent:        var(--af-spark);
+  --af-accent-fg:     #FFFFFF;
+  --af-accent-bg:     var(--af-flare);
+
+  /* ---------- TYPE ---------- */
+  --af-font-sans:     'Space Grotesk', 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+  --af-font-mono:     'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --af-font-display:  'Azonix', 'Orbitron', 'Space Grotesk', system-ui, sans-serif;
+
+  --af-text-xs:       12px;
+  --af-text-sm:       14px;
+  --af-text-base:     16px;
+  --af-text-md:       18px;
+  --af-text-lg:       22px;
+  --af-text-xl:       28px;
+  --af-text-2xl:      36px;
+  --af-text-3xl:      48px;
+  --af-text-4xl:      64px;
+  --af-text-5xl:      88px;
+  --af-text-6xl:      120px;
+
+  --af-leading-tight:   1.05;
+  --af-leading-snug:    1.2;
+  --af-leading-normal:  1.5;
+  --af-leading-relaxed: 1.7;
+
+  --af-tracking-tight:   -0.025em;
+  --af-tracking-normal:  0;
+  --af-tracking-wide:    0.04em;
+  --af-tracking-eyebrow: 0.28em;
+
+  /* ---------- SPACING ---------- */
+  --af-space-0:   0;    --af-space-1:   4px;  --af-space-2:   8px;
+  --af-space-3:   12px; --af-space-4:   16px; --af-space-5:   24px;
+  --af-space-6:   32px; --af-space-7:   48px; --af-space-8:   64px;
+  --af-space-9:   96px; --af-space-10: 128px; --af-space-11: 192px;
+
+  /* ---------- RADIUS ---------- */
+  --af-radius-none: 0;   --af-radius-xs: 4px;  --af-radius-sm: 8px;
+  --af-radius-md: 12px;  --af-radius-lg: 18px; --af-radius-xl: 28px;
+  --af-radius-pill: 9999px;
+
+  /* ---------- SHADOW / GLOW (soft, light-theme) ---------- */
+  --af-shadow-sm:    0 1px 2px rgba(20, 48, 90, 0.06);
+  --af-shadow-md:    0 10px 30px rgba(20, 48, 90, 0.10);
+  --af-shadow-lg:    0 24px 60px rgba(20, 48, 90, 0.14);
+  --af-shadow-xl:    0 40px 100px rgba(20, 48, 90, 0.18);
+  --af-glow-spark:   0 0 0 1px var(--af-border-spark), 0 14px 40px rgba(14, 165, 233, 0.22);
+  --af-glow-spark-lg: 0 0 0 1px var(--af-border-spark), 0 20px 60px rgba(14, 165, 233, 0.32);
+  --af-glow-violet:  0 0 0 1px rgba(129, 140, 248, 0.5), 0 16px 44px rgba(129, 140, 248, 0.28);
+  --af-glow-soft:    0 0 0 1px var(--af-border), 0 10px 30px rgba(20, 48, 90, 0.08);
+
+  /* ---------- GRADIENTS (sky-blue, airy) ---------- */
+  --af-grad-spectrum:   linear-gradient(110deg, #0EA5E9 0%, #38BDF8 45%, #818CF8 100%); /* signature sky sweep */
+  --af-grad-cyan:       linear-gradient(135deg, #38BDF8 0%, #0EA5E9 60%, #0284C7 100%);
+  --af-grad-violet:     linear-gradient(135deg, #A5B4FC 0%, #818CF8 50%, #6366F1 100%);
+  --af-grad-aurora:     radial-gradient(circle at 18% 18%, rgba(56,189,248,0.40), transparent 55%),
+                        radial-gradient(circle at 82% 28%, rgba(129,140,248,0.30), transparent 55%),
+                        radial-gradient(circle at 50% 92%, rgba(45,212,191,0.22), transparent 55%),
+                        #EAF2FE;                                            /* hero ambient field */
+  --af-grad-nebula:     radial-gradient(circle at 30% 12%, rgba(56,189,248,0.28), transparent 60%),
+                        radial-gradient(circle at 75% 80%, rgba(129,140,248,0.22), transparent 55%),
+                        linear-gradient(180deg, #F2F7FF 0%, #E2ECFD 100%);
+  --af-grad-glass:      linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.45) 100%);
+  --af-grad-chrome:     linear-gradient(135deg, #FFFFFF 0%, #CBD6E8 45%, #8499BE 100%);  /* polished metal */
+  --af-grad-steel:      linear-gradient(135deg, #FFFFFF 0%, #E4ECF7 100%);
+  --af-grad-deep:       linear-gradient(180deg, #F2F7FF 0%, #DCE8FB 100%);
+  --af-grad-light:      linear-gradient(160deg, #F8FBFF 0%, #E6EEFC 55%, #D6E4FB 100%);
+  --af-grad-halo:       conic-gradient(from 180deg, #0EA5E9, #38BDF8, #818CF8, #2DD4BF, #0EA5E9);
+
+  /* ---------- MOTION ---------- */
+  --af-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --af-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --af-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --af-dur-fast:    180ms; --af-dur-base: 280ms; --af-dur-slow: 480ms; --af-dur-hero: 900ms;
+
+  /* ---------- LAYOUT ---------- */
+  --af-container:   1200px;
+  --af-container-wide: 1440px;
+  --af-gutter:      24px;
+}
+
+/* ============================================================
+   SEMANTIC ELEMENT STYLES
+   ============================================================ */
+
+.af-body {
+  background: var(--af-bg);
+  color: var(--af-fg-2);
+  font-family: var(--af-font-sans);
+  font-size: var(--af-text-base);
+  line-height: var(--af-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.af-display {
+  font-family: var(--af-font-display);
+  font-weight: 400;
+  font-size: clamp(48px, 8vw, var(--af-text-6xl));
+  line-height: var(--af-leading-tight);
+  letter-spacing: 0.02em;
+  color: var(--af-fg);
+  text-transform: uppercase;
+}
+
+.af-h1 {
+  font-family: var(--af-font-display); font-weight: 400;
+  font-size: var(--af-text-4xl); line-height: var(--af-leading-tight);
+  letter-spacing: 0.02em; color: var(--af-fg); text-transform: uppercase;
+}
+.af-h2 {
+  font-family: var(--af-font-display); font-weight: 400;
+  font-size: var(--af-text-3xl); line-height: var(--af-leading-snug);
+  letter-spacing: 0.02em; color: var(--af-fg); text-transform: uppercase;
+}
+.af-h3 {
+  font-family: var(--af-font-sans); font-weight: 600;
+  font-size: var(--af-text-xl); line-height: var(--af-leading-snug); color: var(--af-fg);
+}
+.af-h4 {
+  font-family: var(--af-font-sans); font-weight: 600;
+  font-size: var(--af-text-lg); line-height: var(--af-leading-snug); color: var(--af-fg);
+}
+
+.af-eyebrow {
+  font-family: var(--af-font-mono); font-weight: 500;
+  font-size: var(--af-text-xs); letter-spacing: var(--af-tracking-eyebrow);
+  text-transform: uppercase; color: var(--af-spark);
+}
+
+.af-body-lg { font-size: var(--af-text-md); line-height: var(--af-leading-relaxed); color: var(--af-fg-3); }
+.af-body-md { font-size: var(--af-text-base); line-height: var(--af-leading-relaxed); color: var(--af-fg-3); }
+.af-body-sm { font-size: var(--af-text-sm); line-height: var(--af-leading-normal); color: var(--af-fg-4); }
+.af-caption { font-size: var(--af-text-xs); line-height: var(--af-leading-normal); color: var(--af-fg-4); letter-spacing: 0.02em; }
+.af-mono { font-family: var(--af-font-mono); font-size: var(--af-text-sm); letter-spacing: 0; }
+
+.af-spark { color: var(--af-spark); }
+.af-spectrum {
+  background: var(--af-grad-spectrum);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.af-rule { height: 1px; background: var(--af-border); border: 0; }
+.af-rule-spark { height: 1px; background: var(--af-grad-spectrum); border: 0; opacity: 0.7; }
+
+.af-glass {
+  background: var(--af-glass);
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-lg);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: var(--af-shadow-md);
+}

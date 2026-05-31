@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import Application
 from .serializers import ApplicationSerializer
+from .sheets import append_application
 
 
 class ApplicationCreateView(APIView):
@@ -12,7 +13,9 @@ class ApplicationCreateView(APIView):
     def post(self, request):
         serializer = ApplicationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            application = serializer.save()
+            # Mirror to Google Sheets — best-effort, never blocks the response.
+            append_application(application)
             return Response(
                 {'message': 'Application received successfully.', 'data': serializer.data},
                 status=status.HTTP_201_CREATED

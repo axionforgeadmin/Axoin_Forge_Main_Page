@@ -22,4 +22,16 @@ export default defineConfig({
       },
     },
   },
+  // `npm run preview` serves the production build; proxy /api so the built
+  // site (which calls the relative /api) can reach the local backend —
+  // mirrors the nginx reverse-proxy used in production.
+  preview: {
+    port: 4173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
 })

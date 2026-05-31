@@ -1,103 +1,123 @@
-import { useForm } from 'react-hook-form'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useMutation } from '@tanstack/react-query'
-import { useModalStore } from '../store/modalStore'
-import { submitApplication } from '../services/api'
+import React, { useState } from 'react';
+import Button from './Button';
+import { submitApplication } from '../services/api';
 
-export default function ApplyModal() {
-  const { close, program } = useModalStore()
-  const { register, handleSubmit, formState: { errors } } = useForm()
+// ApplyModal — apply / register form, submits to the backend API.
 
-  const mutation = useMutation({
-    mutationFn: submitApplication,
-    onSuccess: () => {
-      setTimeout(close, 2000)
-    },
-  })
+function ApplyModal({ program, onClose }) {
+  const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', phone: '', college: '' });
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
 
-  const onSubmit = (data) => mutation.mutate({ ...data, program })
+  function update(k, v) { setForm(f => ({ ...f, [k]: v })); setErrors(e => ({ ...e, [k]: null })); setSubmitError(null); }
+
+  async function submit(e) {
+    e.preventDefault();
+    const errs = {};
+    if (!form.name.trim()) errs.name = 'Required';
+    if (!form.email.trim()) errs.email = 'Required';
+    if (!form.phone.trim()) errs.phone = 'Required';
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setPending(true);
+    setSubmitError(null);
+    try {
+      await submitApplication({ ...form, program });
+      setPending(false);
+      setSubmitted(true);
+      setTimeout(onClose, 1600);
+    } catch (err) {
+      setPending(false);
+      const data = err?.response?.data;
+      if (data && typeof data === 'object') {
+        const fieldErrs = {};
+        for (const k of ['name', 'email', 'phone', 'college']) {
+          if (Array.isArray(data[k]) && data[k][0]) fieldErrs[k] = data[k][0];
+        }
+        if (Object.keys(fieldErrs).length) setErrors(fieldErrs);
+      }
+      setSubmitError('Could not submit — please try again.');
+    }
+  }
+
+  const programLabel = program === 'register' ? 'Register Interest' : program ? `Apply — ${program[0].toUpperCase() + program.slice(1)} Program` : 'Apply';
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-        onClick={(e) => e.target === e.currentTarget && close()}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ duration: 0.4 }}
-          className="w-full max-w-md p-8 rounded-2xl border border-white/10 bg-black/90 backdrop-blur-xl shadow-[0_0_60px_rgba(139,92,246,0.2)]"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-white">
-              {program === 'register' ? 'Register Interest' : `Apply — ${program ? program.charAt(0).toUpperCase() + program.slice(1) : ''} Program`}
-            </h3>
-            <button onClick={close} className="text-gray-500 hover:text-white transition-colors text-2xl leading-none">×</button>
-          </div>
+    <div
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 100, padding: 16,
+        background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        animation: 'af-fade 200ms ease-out',
+      }}
+    >
+      <style>{`@keyframes af-fade { from { opacity: 0 } to { opacity: 1 } }`}</style>
+      <div style={{
+        width: '100%', maxWidth: 440, padding: 32, borderRadius: 20,
+        background: 'rgba(255,255,255,0.97)', border: '1px solid var(--af-border)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: '0 0 0 1px rgba(14,165,233,0.20), 0 30px 80px rgba(20,48,90,0.25)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--af-fg)' }}>{programLabel}</h3>
+          <button onClick={onClose} aria-label="Close" style={{
+            background: 'transparent', border: 0, color: 'var(--af-fg-4)', fontSize: 22, cursor: 'pointer',
+            lineHeight: 1, padding: 4,
+          }}>×</button>
+        </div>
 
-          {mutation.isSuccess ? (
-            <div className="text-center py-8">
-              <p className="text-emerald-400 text-lg font-semibold">Application Received!</p>
-              <p className="text-gray-500 text-sm mt-2">We'll reach out to you shortly.</p>
+        {submitted ? (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ color: 'var(--af-spark)', fontSize: 18, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              Application Received
             </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-              <div>
-                <input
-                  {...register('name', { required: 'Name is required' })}
-                  placeholder="Full Name"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                />
-                {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>}
-              </div>
-
-              <div>
-                <input
-                  {...register('email', { required: 'Email is required' })}
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                />
-                {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>}
-              </div>
-
-              <div>
-                <input
-                  {...register('phone', { required: 'Phone is required' })}
-                  placeholder="Phone Number"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                />
-                {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone.message}</p>}
-              </div>
-
-              <div>
-                <input
-                  {...register('college')}
-                  placeholder="College / Institution"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-colors"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={mutation.isPending}
-                className="mt-2 w-full py-3 rounded-xl font-semibold text-white bg-purple-600 hover:bg-purple-500 disabled:opacity-50 transition-all duration-300"
-              >
-                {mutation.isPending ? 'Submitting...' : 'Submit Application'}
-              </button>
-
-              {mutation.isError && (
-                <p className="text-red-400 text-sm text-center">Something went wrong. Please try again.</p>
-              )}
-            </form>
-          )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  )
+            <p style={{ color: 'var(--af-fg-4)', fontSize: 13, marginTop: 8 }}>We'll reach out to you shortly.</p>
+          </div>
+        ) : (
+          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <Field label="Full Name" value={form.name} onChange={(v) => update('name', v)} error={errors.name} />
+            <Field label="Email" type="email" value={form.email} onChange={(v) => update('email', v)} error={errors.email} />
+            <Field label="Phone" value={form.phone} onChange={(v) => update('phone', v)} error={errors.phone} />
+            <Field label="College / Institution" value={form.college} onChange={(v) => update('college', v)} optional />
+            <Button type="submit" variant="primary" className="modal-submit" disabled={pending}>
+              {pending ? 'Submitting…' : 'Submit Application'}
+            </Button>
+            {submitError && <p style={{ color: 'var(--af-danger)', fontSize: 12, textAlign: 'center', margin: 0 }}>{submitError}</p>}
+          </form>
+        )}
+      </div>
+    </div>
+  );
 }
+
+function Field({ label, value, onChange, error, type = 'text', optional }) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <div>
+      <input
+        type={type}
+        value={value}
+        placeholder={label + (optional ? ' (optional)' : '')}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        style={{
+          width: '100%', padding: '13px 16px', borderRadius: 12,
+          background: 'var(--af-surface-2)',
+          color: 'var(--af-fg)',
+          fontFamily: 'var(--af-font-sans)',
+          fontSize: 15,
+          border: '1px solid ' + (error ? 'var(--af-danger)' : focus ? 'var(--af-spark)' : 'var(--af-border)'),
+          boxShadow: focus && !error ? '0 0 0 3px rgba(14,165,233,0.18)' : error ? '0 0 0 3px rgba(229,72,77,0.15)' : 'none',
+          outline: 'none',
+          transition: 'all 180ms ease',
+        }}
+      />
+      {error && <p style={{ color: 'var(--af-danger)', fontSize: 11, marginTop: 6 }}>{error}</p>}
+    </div>
+  );
+}
+
+export default ApplyModal;
