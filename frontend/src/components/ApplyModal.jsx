@@ -4,10 +4,19 @@ import { submitApplication } from '../services/api';
 
 // ApplyModal — apply / register form, submits to the backend API.
 
+const PROGRAMS = [
+  { value: 'basic',     label: 'Basic Program' },
+  { value: 'signature', label: 'Signature Program' },
+  { value: 'premium',   label: 'Premium Program' },
+  { value: 'apply',     label: 'Not sure yet' },
+  { value: 'register',  label: 'Just registering interest' },
+];
+
 function ApplyModal({ program, onClose }) {
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', phone: '', college: '' });
+  const initialProgram = PROGRAMS.find(p => p.value === program) ? program : 'apply';
+  const [form, setForm] = useState({ name: '', email: '', phone: '', college: '', selectedProgram: initialProgram });
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState(null);
 
@@ -23,7 +32,7 @@ function ApplyModal({ program, onClose }) {
     setPending(true);
     setSubmitError(null);
     try {
-      await submitApplication({ ...form, program });
+      await submitApplication({ ...form, program: form.selectedProgram });
       setPending(false);
       setSubmitted(true);
       setTimeout(onClose, 1600);
@@ -41,7 +50,7 @@ function ApplyModal({ program, onClose }) {
     }
   }
 
-  const programLabel = program === 'register' ? 'Register Interest' : program ? `Apply — ${program[0].toUpperCase() + program.slice(1)} Program` : 'Apply';
+  const programLabel = 'Apply to AXIONFORGE';
 
   return (
     <div
@@ -81,6 +90,28 @@ function ApplyModal({ program, onClose }) {
             <Field label="Email" type="email" value={form.email} onChange={(v) => update('email', v)} error={errors.email} />
             <Field label="Phone" value={form.phone} onChange={(v) => update('phone', v)} error={errors.phone} />
             <Field label="College / Institution" value={form.college} onChange={(v) => update('college', v)} optional />
+            <div>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--af-fg-3)', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                Program Interested In
+              </label>
+              <select
+                value={form.selectedProgram}
+                onChange={(e) => update('selectedProgram', e.target.value)}
+                style={{
+                  width: '100%', padding: '13px 16px', borderRadius: 12,
+                  background: 'var(--af-surface-2)', color: 'var(--af-fg)',
+                  fontFamily: 'var(--af-font-sans)', fontSize: 15,
+                  border: '1px solid var(--af-border)', outline: 'none', cursor: 'pointer',
+                  transition: 'all 180ms ease', appearance: 'none',
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center',
+                }}
+              >
+                {PROGRAMS.map(p => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+            </div>
             <Button type="submit" variant="primary" className="modal-submit" disabled={pending}>
               {pending ? 'Submitting…' : 'Submit Application'}
             </Button>
